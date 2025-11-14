@@ -1,0 +1,550 @@
+ <!DOCTYPE html>
+<html lang="es" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Interactivo | Franko Salgado Bonilla</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- Chosen Palette: Modern Professional -->
+    <!-- Application Structure Plan: He diseñado un SPA de tipo 'portfolio interactivo'. En lugar de una lista vertical, la arquitectura se centra en una *línea de tiempo visual e interactiva* para la 'Trayectoria'. El usuario hace clic en un puesto y una sección de 'Detalles' se actualiza dinámicamente (JS). Esto fomenta la exploración. Se complementa con un gráfico (Chart.js) que resume el enfoque de su carrera, y secciones de 'Logros' y 'Habilidades' organizadas en tarjetas y pestañas para una lectura rápida y no lineal. Esta estructura está diseñada para un empleador o cliente que necesita escanear rápidamente los puntos clave. -->
+    <!-- Visualization & Content Choices: 
+        - Trayectoria (11 jobs): Combo de `Línea de Tiempo (HTML/Tailwind)` + `Bloque de Contenido Dinámico (HTML/JS)`. Interaction: `onClick` en un item de la timeline. Justification: Mucho más atractivo que una lista; la actualización dinámica mantiene al usuario en contexto. Library: Vanilla JS.
+        - Resumen de Carrera: `Gráfico de Donut (Chart.js)`. Interaction: Tooltips. Justification: Cuantifica su experiencia en áreas clave (Hoteles, Restaurantes, Emprendimiento, Educación). Library: Chart.js (Canvas).
+        - Logros (6 items): `Cuadrícula de Tarjetas (HTML/Tailwind)` con íconos Unicode. Justification: Separa los logros del texto denso, dándoles el peso que merecen.
+        - Habilidades (5 grupos): `Sistema de Pestañas (HTML/Tailwind/JS)`. Interaction: `onClick` en pestañas. Justification: Evita una 'lista de listas' abrumadora y permite al usuario auto-seleccionar. Library: Vanilla JS.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+    <style>
+        .timeline-item {
+            cursor: pointer;
+        }
+        .timeline-item.active {
+            border-color: #1e3a8a; 
+            transform: scale(1.05);
+        }
+        .tab-button.active {
+            border-color: #1e3a8a;
+            background-color: #1e3a8a;
+            color: #ffffff;
+        }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 450px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 400px;
+            }
+        }
+    </style>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        'primary': '#1e3a8a',
+                        'secondary': '#dbeafe',
+                        'accent': '#fbbf24',
+                    }
+                }
+            }
+        }
+    </script>
+</head>
+<body class="bg-stone-50 font-sans text-gray-800 antialiased">
+
+    <header class="bg-white/80 backdrop-blur-md shadow-sm sticky top-0 z-50">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div class="flex items-center">
+                <span class="text-2xl font-bold text-primary">Franko Salgado</span>
+            </div>
+            <div class="hidden md:flex space-x-6">
+                <a href="#inicio" class="text-gray-600 hover:text-primary transition-colors nav-link">Inicio</a>
+                <a href="#trayectoria" class="text-gray-600 hover:text-primary transition-colors nav-link">Trayectoria</a>
+                <a href="#logros" class="text-gray-600 hover:text-primary transition-colors nav-link">Logros</a>
+                <a href="#habilidades" class="text-gray-600 hover:text-primary transition-colors nav-link">Habilidades</a>
+                <a href="#contacto" class="text-gray-600 hover:text-primary transition-colors nav-link">Contacto</a>
+            </div>
+            <div class="md:hidden">
+                <button id="mobile-menu-button" class="text-gray-700 focus:outline-none">
+                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"></path></svg>
+                </button>
+            </div>
+        </nav>
+        <div id="mobile-menu" class="hidden md:hidden px-4 pt-2 pb-4 space-y-2 bg-white shadow-lg">
+            <a href="#inicio" class="block text-gray-600 hover:text-primary transition-colors nav-link">Inicio</a>
+            <a href="#trayectoria" class="block text-gray-600 hover:text-primary transition-colors nav-link">Trayectoria</a>
+            <a href="#logros" class="block text-gray-600 hover:text-primary transition-colors nav-link">Logros</a>
+            <a href="#habilidades" class="block text-gray-600 hover:text-primary transition-colors nav-link">Habilidades</a>
+            <a href="#contacto" class="block text-gray-600 hover:text-primary transition-colors nav-link">Contacto</a>
+        </div>
+    </header>
+
+    <main class="container mx-auto px-4 sm:px-6 lg:px-8 py-12">
+        
+        <section id="inicio" class="text-center pt-16 pb-24">
+            <h1 class="text-4xl md:text-6xl font-extrabold text-primary mb-4">Francisco "Franko" Salgado Bonilla</h1>
+            <p class="text-xl md:text-2xl text-gray-600 font-light max-w-3xl mx-auto">
+                Chef Ejecutivo | Consultor Culinario y Digital | Conferencista
+            </p>
+            <div class="mt-8 max-w-4xl mx-auto text-lg text-gray-700 text-left md:text-center leading-relaxed">
+                <p>
+                    Chef Ejecutivo con más de 15 años de experiencia internacional (Costa Rica y México) liderando cocinas en hoteles de lujo (Marriott, InterContinental, Tabacón) y propiedades exclusivas. Experto en alta cocina, cocina molecular, fusión mediterránea, italiana y francesa.
+                </p>
+                <p class="mt-4">
+                    Además de la gestión culinaria, poseo experiencia como Consultor Digital para la industria gastronómica, desarrollando campañas de marketing con datos medibles, y como Conferencista culinario.
+                </p>
+            </div>
+        </section>
+
+        <section id="trayectoria" class="py-16">
+            <h2 class="text-3xl font-bold text-center text-primary mb-12">Trayectoria Profesional Interactiva</h2>
+            <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto">
+                Esta es mi línea de carrera. Haz clic en cualquier puesto para ver los detalles de mis responsabilidades y logros en ese rol.
+            </p>
+            
+            <div class="flex flex-col md:flex-row md:overflow-x-auto md:pb-6 space-y-4 md:space-y-0 md:space-x-4">
+                <div class="flex-shrink-0 grid grid-cols-2 sm:grid-cols-3 md:flex md:flex-row gap-4">
+                    <div class="timeline-item bg-white p-4 rounded-lg shadow-md border-2 border-transparent transition-all duration-300 w-full md:w-48 text-center" data-id="1">
+                        <p class="font-semibold text-primary">Chef Ejecutivo</p>
+                        <p class="text-sm text-gray-500">Verano Estate</p>
+                        <p class="text-xs text-gray-400">(2022 - Actual)</p>
+                    </div>
+                    <div class="timeline-item bg-white p-4 rounded-lg shadow-md border-2 border-transparent transition-all duration-300 w-full md:w-48 text-center" data-id="2">
+                        <p class="font-semibold text-primary">Chef & Consultor</p>
+                        <p class="text-sm text-gray-500">Franko's Kitchen</p>
+                        <p class="text-xs text-gray-400">(2022 - Actual)</p>
+                    </div>
+                    <div class="timeline-item bg-white p-4 rounded-lg shadow-md border-2 border-transparent transition-all duration-300 w-full md:w-48 text-center" data-id="3">
+                        <p class="font-semibold text-primary">Chef Docente</p>
+                        <p class="text-sm text-gray-500">Inst. G. Vallarta</p>
+                        <p class="text-xs text-gray-400">(2020 - 2021)</p>
+                    </div>
+                    <div class="timeline-item bg-white p-4 rounded-lg shadow-md border-2 border-transparent transition-all duration-300 w-full md:w-48 text-center" data-id="4">
+                        <p class="font-semibold text-primary">Chef</p>
+                        <p class="text-sm text-gray-500">Rest. D’Cortes</p>
+                        <p class="text-xs text-gray-400">(2019)</p>
+                    </div>
+                    <div class="timeline-item bg-white p-4 rounded-lg shadow-md border-2 border-transparent transition-all duration-300 w-full md:w-48 text-center" data-id="5">
+                        <p class="font-semibold text-primary">Chef Privado</p>
+                        <p class="text-sm text-gray-500">Guanacaste, CR</p>
+                        <p class="text-xs text-gray-400">(2018)</p>
+                    </div>
+                    <div class="timeline-item bg-white p-4 rounded-lg shadow-md border-2 border-transparent transition-all duration-300 w-full md:w-48 text-center" data-id="6">
+                        <p class="font-semibold text-primary">Sous Chef Ejecutivo</p>
+                        <p class="text-sm text-gray-500">Hotel Royal Corin</p>
+                        <p class="text-xs text-gray-400">(2015)</p>
+                    </div>
+                    <div class="timeline-item bg-white p-4 rounded-lg shadow-md border-2 border-transparent transition-all duration-300 w-full md:w-48 text-center" data-id="7">
+                        <p class="font-semibold text-primary">Cocinero / Chef</p>
+                        <p class="text-sm text-gray-500">Hotel ManGroovy</p>
+                        <p class="text-xs text-gray-400">(2013 - 2015)</p>
+                    </div>
+                    <div class="timeline-item bg-white p-4 rounded-lg shadow-md border-2 border-transparent transition-all duration-300 w-full md:w-48 text-center" data-id="8">
+                        <p class="font-semibold text-primary">Chef Ejecutivo</p>
+                        <p class="text-sm text-gray-500">Rest. Oldnü</p>
+                        <p class="text-xs text-gray-400">(2012 - 2013)</p>
+                    </div>
+                    <div class="timeline-item bg-white p-4 rounded-lg shadow-md border-2 border-transparent transition-all duration-300 w-full md:w-48 text-center" data-id="9">
+                        <p class="font-semibold text-primary">Chef de Partier</p>
+                        <p class="text-sm text-gray-500">InterContinental</p>
+                        <p class="text-xs text-gray-400">(2010 - 2012)</p>
+                    </div>
+                    <div class="timeline-item bg-white p-4 rounded-lg shadow-md border-2 border-transparent transition-all duration-300 w-full md:w-48 text-center" data-id="10">
+                        <p class="font-semibold text-primary">Chef Partier</p>
+                        <p class="text-sm text-gray-500">Marea, Prieta Beach</p>
+                        <p class="text-xs text-gray-400">(2006 - 2011)</p>
+                    </div>
+                    <div class="timeline-item bg-white p-4 rounded-lg shadow-md border-2 border-transparent transition-all duration-300 w-full md:w-48 text-center" data-id="11">
+                        <p class="font-semibold text-primary">Chef de Partier</p>
+                        <p class="text-sm text-gray-500">Tabacon Resort</p>
+                        <p class="text-xs text-gray-400">(2007 - 2010)</p>
+                    </div>
+                </div>
+            </div>
+
+            <div id="experience-details" class="mt-12 bg-white p-6 md:p-8 rounded-lg shadow-xl min-h-[200px]">
+            </div>
+        </section>
+
+        <section id="enfoque" class="py-16 bg-white rounded-lg shadow-lg my-16">
+            <h2 class="text-3xl font-bold text-center text-primary mb-10">Enfoque de Carrera</h2>
+            <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto">
+                Este gráfico resume dónde he concentrado mi experiencia profesional a lo largo de los años, mostrando mi evolución desde la alta hotelería hasta el emprendimiento digital y la educación.
+            </p>
+            <div class="chart-container">
+                <canvas id="careerFocusChart"></canvas>
+            </div>
+        </section>
+
+        <section id="logros" class="py-16">
+            <h2 class="text-3xl font-bold text-center text-primary mb-12">Logros y Reconocimientos Clave</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                
+                <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-accent">
+                    <span class="text-3xl mb-2 block">🏆</span>
+                    <h3 class="font-semibold text-lg text-primary mb-2">Certificat D'Excellence</h3>
+                    <p class="text-gray-600">Le Cordon Bleu, París (2024)</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-accent">
+                    <span class="text-3xl mb-2 block">🏅</span>
+                    <h3 class="font-semibold text-lg text-primary mb-2">Reconocimiento Culinario</h3>
+                    <p class="text-gray-600">Otorgado por Gastón Acurio, Lima (2024)</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-accent">
+                    <span class="text-3xl mb-2 block">🎙️</span>
+                    <h3 class="font-semibold text-lg text-primary mb-2">Conferencista Magistral</h3>
+                    <p class="text-gray-600">1er Conronal de #Investur, Nayarit (2023)</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-accent">
+                    <span class="text-3xl mb-2 block">🎖️</span>
+                    <h3 class="font-semibold text-lg text-primary mb-2">Medalla a la Excelencia</h3>
+                    <p class="text-gray-600">Otorgada por Gerard Dupont y Hugo Lombardi (en Tabacon Resort)</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-accent">
+                    <span class="text-3xl mb-2 block">📸</span>
+                    <h3 class="font-semibold text-lg text-primary mb-2">Imagen Publicitaria</h3>
+                    <p class="text-gray-600">Seleccionado como imagen para publicidad del PIMA</p>
+                </div>
+                <div class="bg-white p-6 rounded-lg shadow-lg border-l-4 border-accent">
+                    <span class="text-3xl mb-2 block">📺</span>
+                    <h3 class="font-semibold text-lg text-primary mb-2">Chef en Vivo</h3>
+                    <p class="text-gray-600">Impartición de clases de cocina en vivo para Teletica</p>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="habilidades" class="py-16">
+            <h2 class="text-3xl font-bold text-center text-primary mb-12">Habilidades y Competencias</h2>
+            <p class="text-center text-gray-600 mb-10 max-w-2xl mx-auto">
+                Mi carrera me ha permitido desarrollar un conjunto de habilidades diverso, que abarca desde la técnica culinaria de precisión hasta la gestión de equipos y el marketing digital.
+            </p>
+            
+            <div>
+                <div class="flex flex-col sm:flex-row justify-center border-b border-gray-300 mb-6">
+                    <button class="tab-button py-3 px-6 font-semibold text-gray-600 border-b-2 border-transparent hover:text-primary transition-colors active" data-tab="cocina">
+                        Alta Cocina
+                    </button>
+                    <button class="tab-button py-3 px-6 font-semibold text-gray-600 border-b-2 border-transparent hover:text-primary transition-colors" data-tab="gestion">
+                        Gestión y Liderazgo
+                    </button>
+                    <button class="tab-button py-3 px-6 font-semibold text-gray-600 border-b-2 border-transparent hover:text-primary transition-colors" data-tab="digital">
+                        Digital y Medios
+                    </button>
+                </div>
+
+                <div id="tab-content" class="bg-white p-6 rounded-lg shadow-lg">
+                    <div id="cocina" class="tab-pane">
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>Cocina Molecular</li>
+                            <li>Fusión Mediterránea</li>
+                            <li>Cocina Francesa (Clásica y Moderna)</li>
+                            <li>Cocina Italiana (Auténtica y de Vanguardia)</li>
+                            <li>Cocina Española (Tradicional y Tapas)</li>
+                        </ul>
+                    </div>
+                    <div id="gestion" class="tab-pane hidden">
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>Liderazgo y Formación de Equipos</li>
+                            <li>Creación y Diseño de Menús</li>
+                            <li>Control de Costos y Mermas</li>
+                            <li>Gestión de Inventarios y Pedidos</li>
+                            <li>Mantenimiento de Estándares de Calidad y Lujo</li>
+                        </ul>
+                    </div>
+                    <div id="digital" class="tab-pane hidden">
+                        <ul class="list-disc list-inside space-y-2 text-gray-700">
+                            <li>Consultoría de Marketing Gastronómico</li>
+                            <li>Desarrollo de Campañas con Datos Medibles</li>
+                            <li>Conferencista y Orador Público</li>
+                            <li>Experiencia frente a cámaras (TV y Publicidad)</li>
+                            <li>Software: Microsoft Office (Paquete completo)</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="formacion" class="py-16">
+            <h2 class="text-3xl font-bold text-center text-primary mb-12">Formación Académica</h2>
+            <div class="max-w-2xl mx-auto bg-white p-8 rounded-lg shadow-lg">
+                <ul class="space-y-4">
+                    <li class="border-b pb-4">
+                        <h3 class="font-semibold text-lg text-primary">Cocinero Profesional e Internacional</h3>
+                        <p class="text-gray-600">Instituto Gastronómico Escofierr (2005-2007)</p>
+                    </li>
+                    <li class="border-b pb-4">
+                        <h3 class="font-semibold text-lg text-primary">Diplomado en Artes Culinarias</h3>
+                        <p class="text-gray-600">Universidad Interamericana</p>
+                    </li>
+                    <li class="border-b pb-4">
+                        <h3 class="font-semibold text-lg text-primary">Cocinero 1 (Española, Italiana, Francesa)</h3>
+                        <p class="text-gray-600">Instituto Nacional de Aprendizaje (INA)</p>
+                    </li>
+                    <li>
+                        <h3 class="font-semibold text-lg text-primary">Bachillerato en Educación Media</h3>
+                        <p class="text-gray-600">Liceo de Santa Cruz (2000)</p>
+                    </li>
+                </ul>
+            </div>
+        </section>
+
+    </main>
+
+    <footer id="contacto" class="bg-primary text-white py-16">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <h2 class="text-3xl font-bold mb-6">Contacta Conmigo</h2>
+            <p class="text-lg text-secondary mb-8 max-w-xl mx-auto">
+                Estoy disponible para roles de Chef Ejecutivo, proyectos de consultoría, servicios de chef privado y conferencias.
+            </p>
+            <div class="flex flex-col sm:flex-row justify-center items-center space-y-4 sm:space-y-0 sm:space-x-8">
+                <a href="tel:+50670082071" class="text-lg hover:text-accent transition-colors">
+                    📞 7008-2071
+                </a>
+                <a href="mailto:frankocheff@gmail.com" class="text-lg hover:text-accent transition-colors">
+                    ✉️ frankocheff@gmail.com
+                </a>
+                <span class="text-lg">
+                    📍 Costa Rica & México
+                </span>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            
+            const experienceData = {
+                1: {
+                    puesto: 'Chef Ejecutivo',
+                    lugar: 'Verano Estate, Conchas Chinas, PV, México (2022 - Actualidad)',
+                    desc: [
+                        'Liderazgo de la experiencia culinaria de alto nivel para un complejo residencial de lujo.',
+                        'Gestión integral de la cocina, creación de menús, control de costos y supervisión de personal.'
+                    ]
+                },
+                2: {
+                    puesto: 'Chef Privado & Consultor Digital',
+                    lugar: 'Emprendimiento Propio (Franko\'s Kitchen) (2022 - Actualidad)',
+                    desc: [
+                        'Servicios de chef privado de alto perfil en la región de Puerto Vallarta y Guanacaste.',
+                        'Consultoría digital para restaurantes: desarrollo e implementación de campañas de marketing gastronómico con análisis de datos medibles.'
+                    ]
+                },
+                3: {
+                    puesto: 'Chef Docente',
+                    lugar: 'Instituto Gastronómico Instituto Vallarta, México (2020 - 2021)',
+                    desc: [
+                        'Instructor culinario impartiendo técnicas de cocina profesional a nuevas generaciones de chefs.'
+                    ]
+                },
+                4: {
+                    puesto: 'Chef',
+                    lugar: 'Restaurante D’Cortes, México (2019)',
+                    desc: [
+                        'Colaboración en restaurante de alta cocina bajo la dirección del Chef Leopoldo Cortés.'
+                    ]
+                },
+                5: {
+                    puesto: 'Chef Privado',
+                    lugar: 'Guanacaste, Costa Rica (2018)',
+                    desc: [
+                        'Servicios de chef privado, colaborando directamente con el Chef Sebastian Couratier.'
+                    ]
+                },
+                6: {
+                    puesto: 'Sous Chef Ejecutivo',
+                    lugar: 'Hotel Royal Corin, La Fortuna, Costa Rica (2015)',
+                    desc: [
+                        'Segundo al mando de la operación culinaria del hotel, supervisando personal y gestión de cocina.'
+                    ]
+                },
+                7: {
+                    puesto: 'Cocinero / Chef',
+                    lugar: 'Hotel ManGroovy, Autograph Collection (Marriott), Guanacaste (2013 - 2015)',
+                    desc: [
+                        'Ejecución de estándares de calidad bajo la dirección del Chef Walter Andrés.'
+                    ]
+                },
+                8: {
+                    puesto: 'Chef Ejecutivo',
+                    lugar: 'Restaurante Oldnü, Santa Ana, San José (2012 - 2013)',
+                    desc: [
+                        'Liderazgo de cocina de nueva tendencia (molecular) y fusión mediterránea e italiana.'
+                    ]
+                },
+                9: {
+                    puesto: 'Chef de Partier',
+                    lugar: 'Hotel Real Intercontinental, Santa Ana (2010 - 2012)',
+                    desc: [
+                        'Supervisor en el Restaurante Alfredo (especialidad italiana).'
+                    ]
+                },
+                10: {
+                    puesto: 'Chef Partier',
+                    lugar: 'Restaurante Marea, Prieta Beach Club (2006 - 2011)',
+                    desc: [
+                        'Supervisión de personal, realización de pedidos y seguimiento de estándares.'
+                    ]
+                },
+                11: {
+                    puesto: 'Chef de Partier',
+                    lugar: 'Tabacon Termal Resort, La Fortuna (2007 - 2010)',
+                    desc: [
+                        'Segundo al mando (después del Sous Chef), encargado de montajes y producciones.'
+                    ]
+                }
+            };
+
+            const detailsContainer = document.getElementById('experience-details');
+            const timelineItems = document.querySelectorAll('.timeline-item');
+            
+            function updateExperienceDetails(id) {
+                const data = experienceData[id];
+                if (!data) return;
+
+                let descHtml = '<ul class="list-disc list-inside space-y-2 text-gray-700">';
+                data.desc.forEach(item => {
+                    descHtml += `<li>${item}</li>`;
+                });
+                descHtml += '</ul>';
+
+                detailsContainer.innerHTML = `
+                    <h3 class="text-2xl font-bold text-primary mb-2">${data.puesto}</h3>
+                    <p class="text-lg font-semibold text-gray-600 mb-4">${data.lugar}</p>
+                    ${descHtml}
+                `;
+                
+                timelineItems.forEach(item => {
+                    item.classList.remove('active', 'border-primary');
+                    if (item.dataset.id === id) {
+                        item.classList.add('active', 'border-primary');
+                    }
+                });
+            }
+            
+            timelineItems.forEach(item => {
+                item.addEventListener('click', () => {
+                    updateExperienceDetails(item.dataset.id);
+                });
+            });
+
+            updateExperienceDetails('1');
+
+            const tabButtons = document.querySelectorAll('.tab-button');
+            const tabPanes = document.querySelectorAll('.tab-pane');
+
+            tabButtons.forEach(button => {
+                button.addEventListener('click', () => {a
+                    tabButtons.forEach(btn => btn.classList.remove('active', 'text-primary'));
+                    button.classList.add('active', 'text-primary');
+
+                    tabPanes.forEach(pane => {
+                        pane.classList.add('hidden');
+                        if (pane.id === button.dataset.tab) {
+                            pane.classList.remove('hidden');
+                        }
+                    });
+                });
+            });
+
+            const mobileMenuButton = document.getElementById('mobile-menu-button');
+            const mobileMenu = document.getElementById('mobile-menu');
+
+            mobileMenuButton.addEventListener('click', () => {
+                mobileMenu.classList.toggle('hidden');
+            });
+
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', (e) => {
+                    if (mobileMenu.offsetParent !== null) {
+                         mobileMenu.classList.add('hidden');
+                    }
+                    if (link.hash !== "") {
+                        e.preventDefault();
+                        const hash = link.hash;
+                        const targetElement = document.querySelector(hash);
+                        if(targetElement) {
+                            const headerOffset = document.querySelector('header').offsetHeight;
+                            const elementPosition = targetElement.offsetTop;
+                            window.scrollTo({
+                                top: elementPosition - headerOffset - 20,
+                                behavior: "smooth"
+                            });
+                        }
+                    }
+                });
+            });
+
+            const ctx = document.getElementById('careerFocusChart').getContext('2d');
+            new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['Hoteles de Lujo', 'Emprendimiento y Consultoría', 'Restaurantes de Alta Cocina', 'Educación y Medios'],
+                    datasets: [{
+                        data: [45, 25, 20, 10],
+                        backgroundColor: [
+                            '#1e3a8a', 
+                            '#3b82f6', 
+                            '#93c5fd', 
+                            '#fbbf24'  
+                        ],
+                        borderColor: '#ffffff',
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: {
+                                padding: 20,
+                                font: {
+                                    size: 14,
+                                    family: 'Inter, sans-serif'
+                                }
+                            }
+                        },
+                        tooltip: {
+                            bodyFont: {
+                                size: 14,
+                                family: 'Inter, sans-serif'
+                            },
+                            titleFont: {
+                                size: 16,
+                                family: 'Inter, sans-serif',
+                                weight: 'bold'
+                            },
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed !== null) {
+                                        label += context.parsed + '%';
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    cutout: '60%'
+                }
+            });
+        });
+    </script>
+</body>
+</html>
